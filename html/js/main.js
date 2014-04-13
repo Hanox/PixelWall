@@ -9,7 +9,7 @@ var mCtx;
 var mShowGrid = true;
 var mRedrawRequested = true;
 var mGridWidth = 30;
-var mGridHeight = 10;
+var mGridHeight = 20;
 var mPixelSize = 32;
 
 var mCurrentGridData;
