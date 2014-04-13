@@ -1,0 +1,29 @@
+addons.make
+config.make
+Makefile
+openFrameworks-Info.plist
+bin/PixelCam.app/*
+PixelCam.xcodeproj/*
+Project.xcconfig
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
