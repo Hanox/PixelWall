@@ -3,7 +3,6 @@
 #include "ofxOpenCv.h"
 #include "SkewGrid.h"
 #include "DragPoint.h"
-#include "WallData.h"
 
 class testApp : public ofBaseApp
 {
@@ -22,7 +21,9 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
+    void urlResponse(ofHttpResponse & response);
     ofColor getColorAtPos(int x, int y, int camWidth, unsigned char * pixels);
+    bool IsColorSimilar(ofColor source, ofColor target);
 
     ofVideoGrabber vidGrabber;
     int camHeight;
@@ -30,7 +31,12 @@ public:
     SkewGrid skewGrid;
     DragPoint dragGridTopLeft;
     DragPoint dragGridBottomRight;
-    WallData wallData;
+    vector<int> wallData;
     vector<ofColor> colorData;
     vector<ofColor> compareColors;
+    
+    int colorSelectX;
+    int colorSelectY;
+    int selectColorIndex;
+    bool registerColor;
 };
