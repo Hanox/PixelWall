@@ -27,8 +27,8 @@ function drawGrid()
     {
         for (var y=0;y<mGridHeight;++y)
         {
-            // Find the starting index in the one-dimensional image data
-            var i = y*mGridWidth + x;
+            // Find the starting index in the one-dimensional image data (we flip y)
+            var i = (mGridHeight - y - 1) * mGridWidth + x;
             var colorIndex = parseInt(mCurrentGridData.substring(i,i+1));
             mCtx.fillStyle = colorPalette[colorIndex];
             mCtx.fillRect( x*mPixelSize, y*mPixelSize, mPixelSize, mPixelSize);
@@ -59,7 +59,6 @@ function tick()
     requestAnimFrame(tick);
 	mTime.Tick();
 	fnUpdate();
-	drawScene();
 }
 
 function getLatestData()
