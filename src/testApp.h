@@ -40,4 +40,5 @@ public:
     int colorSelectY;
     int selectColorIndex;
     bool registerColor;
+    string lastData;
 };

@@ -85,16 +85,21 @@ void testApp::update()
             
             if(isImageValid)
             {
-                std::string sData = "";
+                string sData = "";
                 for (int i = 0; i < wallData.size(); ++i)
                 {
-                    std::ostringstream ss;
+                    ostringstream ss;
                     ss << wallData[i];
                     sData = sData + ss.str();
                 }
-                sData = "curl \"http://hannesdeville.be/dev/pixelwall/webservice.php?id=thesecretid&data=" + sData + "\"";
-                system( (char*)sData.c_str());
-                cout << "system call: " << sData;
+                
+                if( sData.compare(lastData) != 0)
+                {
+                    lastData = sData;
+                    sData = "curl \"http://hannesdeville.be/dev/pixelwall/webservice.php?id=thesecretid&data=" + sData + "\"";
+                    system( (char*)sData.c_str());
+                    cout << "system call: " << sData;
+                }
             }
         }
     }
@@ -198,7 +203,7 @@ ofColor testApp::getColorAtPos(int x, int y, int width, unsigned char * pixels)
 
 bool testApp::IsColorSimilar(ofColor source, ofColor target)
 {
-    int deviation = 50;
+    int deviation = 100;
     return  source.r > target.r - deviation && source.r < target.r + deviation &&
             source.g > target.g - deviation && source.g < target.g + deviation &&
             source.b > target.b - deviation && source.b < target.b + deviation;
