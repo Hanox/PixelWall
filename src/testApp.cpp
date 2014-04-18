@@ -13,10 +13,10 @@ void testApp::setup()
     int numPixels = camWidth * camHeight / 100;
     
     ofVec2f topLeft;
-    topLeft.set(0, 0);
+    topLeft.set(10, 10);
     
     ofVec2f bottomRight;
-    bottomRight.set(100, 100);
+    bottomRight.set(310, 230);
     
     dragGridTopLeft.Setup(topLeft);
     dragGridBottomRight.Setup(bottomRight);
@@ -59,7 +59,7 @@ void testApp::update()
         }
         else
         {
-            bool isImageValid = false;
+            bool isImageValid = true;
             for (int gridIndex = 0; gridIndex < skewGrid.grid.size(); ++gridIndex)
             {
                 ofColor camColor = getColorAtPos(skewGrid.grid[gridIndex].x, skewGrid.grid[gridIndex].y, camWidth, pixels);
@@ -78,25 +78,26 @@ void testApp::update()
                 if (!isColorValid)
                 {
                     wallData[gridIndex] = -1;
-                    //isImageValid = false;
+                    isImageValid = false;
                     //break;
                 }
             }
+            
+            if(isImageValid)
+            {
+                std::string sData = "";
+                for (int i = 0; i < wallData.size(); ++i)
+                {
+                    std::ostringstream ss;
+                    ss << wallData[i];
+                    sData = sData + ss.str();
+                }
+                sData = "curl \"http://hannesdeville.be/dev/pixelwall/webservice.php?id=thesecretid&data=" + sData + "\"";
+                system( (char*)sData.c_str());
+                cout << "system call: " << sData;
+            }
         }
-        
-        //if the image is valid we save the new image to the server!
-        //one solution is to keep the file(s) locally and upload them using ofxFTP
-        
-        //OR using PHP
-        //1. Authenticate (LOGIN) - PHP call
-        
-        //2. Check if login was succesfull (ASYNC?)
-        
-        //3. Write the updated data to the server - PHP Call
-        
-        //4. Check if write was succesfull (otherwise keep locally?)
     }
-    
 }
 
 //--------------------------------------------------------------

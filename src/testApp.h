@@ -3,6 +3,7 @@
 #include "ofxOpenCv.h"
 #include "SkewGrid.h"
 #include "DragPoint.h"
+#include <string>
 
 class testApp : public ofBaseApp
 {
