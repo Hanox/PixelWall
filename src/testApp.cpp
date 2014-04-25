@@ -24,7 +24,7 @@ void testApp::setup()
     int gridPixels = 30*20;
     wallData = vector<int>(gridPixels);
     colorData = vector<ofColor>(gridPixels);
-    compareColors = vector<ofColor>(3);
+    compareHues = vector<float>(3);
     
     colorSelectX = 0;
     colorSelectY = 0;
@@ -52,7 +52,8 @@ void testApp::update()
         {
             if (registerColor)
             {
-                compareColors[selectColorIndex] = getColorAtPos(colorSelectX, colorSelectY, camWidth, pixels);
+                compareHues[selectColorIndex] = getAverageHueAtPos(colorSelectX, colorSelectY, camWidth, pixels);
+                cout << "hue " << selectColorIndex << ": " << compareHues[selectColorIndex] << " ";
                 registerColor = false;
                 ++selectColorIndex;
             }
@@ -62,11 +63,11 @@ void testApp::update()
             bool isImageValid = true;
             for (int gridIndex = 0; gridIndex < skewGrid.grid.size(); ++gridIndex)
             {
-                ofColor camColor = getColorAtPos(skewGrid.grid[gridIndex].x, skewGrid.grid[gridIndex].y, camWidth, pixels);
+                float camHue = getAverageHueAtPos(skewGrid.grid[gridIndex].x, skewGrid.grid[gridIndex].y, camWidth, pixels);
                 bool isColorValid = false;
-                for (int compareIndex = 0; compareIndex < compareColors.size(); ++compareIndex)
+                for (int compareIndex = 0; compareIndex < compareHues.size(); ++compareIndex)
                 {
-                    if (IsColorSimilar(camColor, compareColors[compareIndex]))
+                    if (isHueSimilar(camHue, compareHues[compareIndex]))
                     {
                         wallData[gridIndex] = compareIndex;
                         isColorValid = true;
@@ -117,9 +118,11 @@ void testApp::draw()
     skewGrid.Draw();
     
     //draw the selected colors
-    for (int i = 0; i < compareColors.size(); ++i)
+    for (int i = 0; i < compareHues.size(); ++i)
     {
-        ofSetColor(compareColors[i]);
+        ofColor clr;
+        clr.setHsb(compareHues[i], 255.0f, 255.0f);
+        ofSetColor(clr);
         ofRect(320, i * 22, 20, 20);
     }
     
@@ -128,7 +131,9 @@ void testApp::draw()
     //draw the result
     for (int i = 0; i < wallData.size(); ++i)
     {
-        if(wallData[i] >= 0) ofSetColor(compareColors[wallData[i]]);
+        ofColor clr;
+        clr.setHsb(compareHues[wallData[i]], 255.0f, 255.0f);
+        if(wallData[i] >= 0) ofSetColor(clr);
         else ofSetColor(0, 255, 255);
         ofRect( (i % 30) * drawPixelSize, 240 + (19-(i/30))*drawPixelSize, drawPixelSize, drawPixelSize);
     }
@@ -191,6 +196,32 @@ void testApp::urlResponse(ofHttpResponse & response)
     
 }
 
+float testApp::getAverageHueAtPos(int x, int y, int width, unsigned char * pixels)
+{
+    float hueSum = 0;
+    
+    hueSum += getHueAtPos(x-1, y-1, width, pixels);
+    hueSum += getHueAtPos(x  , y-1, width, pixels);
+    hueSum += getHueAtPos(x+1, y-1, width, pixels);
+    
+    hueSum += getHueAtPos(x-1, y  , width, pixels);
+    hueSum += getHueAtPos(x  , y  , width, pixels);
+    hueSum += getHueAtPos(x+1, y  , width, pixels);
+    
+    hueSum += getHueAtPos(x-1, y-1, width, pixels);
+    hueSum += getHueAtPos(x  , y-1, width, pixels);
+    hueSum += getHueAtPos(x+1, y-1, width, pixels);
+    
+    //TODO: eliminate extreme values? : sort, drop first and last, divide by 7
+    
+    return hueSum / 9.0f;
+}
+
+float testApp::getHueAtPos(int x, int y, int width, unsigned char * pixels)
+{
+    return getColorAtPos(x  , y  , width, pixels).getHue();
+}
+
 ofColor testApp::getColorAtPos(int x, int y, int width, unsigned char * pixels)
 {
     int index = y * width * 3 + x * 3;
@@ -201,11 +232,9 @@ ofColor testApp::getColorAtPos(int x, int y, int width, unsigned char * pixels)
     return clr;
 }
 
-bool testApp::IsColorSimilar(ofColor source, ofColor target)
+bool testApp::isHueSimilar(float source, float target)
 {
-    int deviation = 100;
-    return  source.r > target.r - deviation && source.r < target.r + deviation &&
-            source.g > target.g - deviation && source.g < target.g + deviation &&
-            source.b > target.b - deviation && source.b < target.b + deviation;
+    float deviation = 20.0f;
+    return source > target - deviation && source < target + deviation;
 }
 

@@ -23,8 +23,10 @@ public:
     void gotMessage(ofMessage msg);
     
     void urlResponse(ofHttpResponse & response);
+    float getAverageHueAtPos(int x, int y, int camWidth, unsigned char * pixels);
+    float getHueAtPos(int x, int y, int camWidth, unsigned char * pixels);
     ofColor getColorAtPos(int x, int y, int camWidth, unsigned char * pixels);
-    bool IsColorSimilar(ofColor source, ofColor target);
+    bool isHueSimilar(float source, float target);
 
     ofVideoGrabber vidGrabber;
     int camHeight;
@@ -34,7 +36,7 @@ public:
     DragPoint dragGridBottomRight;
     vector<int> wallData;
     vector<ofColor> colorData;
-    vector<ofColor> compareColors;
+    vector<float> compareHues;
     
     int colorSelectX;
     int colorSelectY;
