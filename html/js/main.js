@@ -21,8 +21,11 @@ var mGridWidth = 30;
 var mGridHeight = 20;
 var mPixelSize = 20;
 var mSpacing = 2;
+
 var mRefreshInterval = 1.0;
 var mRefreshTimer;
+var mIndex;
+var mLines;
 
 //data
 var mCurrentGridData;
@@ -33,11 +36,14 @@ var colorPalette = ["rgb(255,0,0)","rgb(0,255,0)","rgb(0,0,255)"];
 /* Function definitions */
 var fnUpdate = function()
 {
-    mRefreshTimer += mTime.deltaTime;
+    mRefreshTimer += mTime.DeltaTime();
 	if( mRefreshTimer > mRefreshInterval)
 	{
 		mRefreshTimer -= mRefreshInterval;
-		getLatestData();
+		if( mLines == null ||  (mLines != null && mIndex == mLines.length - 2) )
+		{
+			getData(-1);
+		}
 	}
 };
 
@@ -69,7 +75,16 @@ function initApp()
 	mTime = new Time();
 	mRefreshTimer = 0.0;
 	
-	getLatestData();
+	getData(-1);
+	
+	/* keyboard */
+	document.addEventListener('keydown', function(event)
+	{
+		//LEFT
+		if(event.keyCode == 37) { showPrev();}
+		//RIGHT
+		else if(event.keyCode == 39){ showNext(); }
+	});
 
 	/* Start the main loop */
 	tick();
@@ -83,20 +98,36 @@ function tick()
 	fnUpdate();
 }
 
-function getLatestData()
+function getData(index)
 {
-    $.get('pixeldata.txt', function(data)
-    {
-		var lines = data.split("\n");
-		var line = lines[lines.length - 2];
-		var lineContents = line.split("|");
-		mCurrentTime = lineContents[0];
-		
-		if(mCurrentGridData != lineContents[1])
-        {
-          mCurrentGridData = lineContents[1];
-          drawGrid();
-        }
-		
-    }, 'text');
+	mIndex = index;
+	if(mIndex == -1 )
+	{
+		$.get('pixeldata.txt', function(data)
+		{
+			mLines = data.split("\n");
+			tryUpdateGrid();
+		}, 'text');
+	}
+	else
+	{
+		tryUpdateGrid();
+	}
 }
+
+function tryUpdateGrid()
+{
+	if(mIndex == -1 || mIndex > mLines.length - 2) mIndex = mLines.length - 2;
+	var line = mLines[mIndex];
+	var lineContents = line.split("|");
+	mCurrentTime = lineContents[0];
+	
+	if(mCurrentGridData != lineContents[1])
+	{
+	  mCurrentGridData = lineContents[1];
+	  drawGrid();
+	}
+}
+
+function showNext() { getData(mIndex+1); }
+function showPrev() { getData(mIndex-1); }
