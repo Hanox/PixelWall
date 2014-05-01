@@ -13,6 +13,7 @@ var mGridHeight = 20;
 var mPixelSize = 20;
 
 var mCurrentGridData;
+var mCurrentTime;
 var colorPalette = ["rgb(255,0,0)","rgb(0,255,0)","rgb(0,0,255)"];
 
 /* Function definitions */
@@ -34,6 +35,7 @@ function drawGrid()
             mCtx.fillRect( x*mPixelSize, y*mPixelSize, mPixelSize, mPixelSize);
         }
     }
+	$("#info").text(mCurrentTime);
 }
 
 function initApp()
@@ -65,10 +67,16 @@ function getLatestData()
 {
     $.get('pixeldata.txt', function(data)
     {
-        if(mCurrentGridData != data)
+		var lines = data.split("\n");
+		var line = lines[lines.length - 2];
+		var lineContents = line.split("|");
+		mCurrentTime = lineContents[0];
+		
+		if(mCurrentGridData != lineContents[1])
         {
-          mCurrentGridData = data;
+          mCurrentGridData = lineContents[1];
           drawGrid();
         }
+		
     }, 'text');
 }

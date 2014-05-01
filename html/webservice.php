@@ -2,13 +2,15 @@
     
     /* http://mydomain.com/webservice.php?id=thesecretid&data=012012012012012... */
 
-    if( isset($_GET['id']) && isset($_GET['data']) )
+    if( isset($_GET['id']) && isset($_GET['data']) && isset($_GET['time']) )
     {
         $id = $_GET['id'];
-        $data = $_GET['data'];
+        $data = rtrim($_GET['data']);
+		$time = rtrim($_GET['time']);
         
         echo "id: $id<br/>";
         echo "data: $data<br/>";
+		echo "time: $time<br/>";
         
         //securely check if the id is valid (using a hidden php script, out of public html or with .htacces restrictions)
         $idValid = true;
@@ -24,20 +26,15 @@
             $file = 'pixeldata.txt';
             
             $current = file_get_contents($file);
-            echo "file content before: $current<br/>";
-            
-            // Open the file to get existing content
-            //$current = file_get_contents($file);
-            
-            // Append a new person to the file
-            //$current .= "John Smith\n";
-            $current = $data;
+            //echo "file content before: $current<br/>";
+			
+            $current .= "$time|$data\n";
             
             // Write the contents back to the file
             file_put_contents($file, $current);
             
-            $current = file_get_contents($file);
-            echo "file content: $current<br/>";
+            //$current = file_get_contents($file);
+            //echo "file content: $current<br/>";
         }
     }
 ?>
