@@ -1,4 +1,13 @@
-$(document).ready(function(){
+$(document).ready(function()
+{
+	addToHomescreen(
+	{
+		skipFirstVisit: false,	// show at first access
+		startDelay: 0,          // display the message right away
+		lifespan: 0,            // do not automatically kill the call out
+		displayPace: 60,        // do not obey the display pace
+		maxDisplayCount: 1      // do not obey the max display count
+	});
 	initApp();
 });
 
@@ -11,15 +20,25 @@ var mRedrawRequested = true;
 var mGridWidth = 30;
 var mGridHeight = 20;
 var mPixelSize = 20;
+var mSpacing = 2;
+var mRefreshInterval = 1.0;
+var mRefreshTimer;
 
+//data
 var mCurrentGridData;
 var mCurrentTime;
+
 var colorPalette = ["rgb(255,0,0)","rgb(0,255,0)","rgb(0,0,255)"];
 
 /* Function definitions */
 var fnUpdate = function()
 {
-    
+    mRefreshTimer += mTime.deltaTime;
+	if( mRefreshTimer > mRefreshInterval)
+	{
+		mRefreshTimer -= mRefreshInterval;
+		getLatestData();
+	}
 };
 
 function drawGrid()
@@ -32,7 +51,7 @@ function drawGrid()
             var i = (mGridHeight - y - 1) * mGridWidth + x;
             var colorIndex = parseInt(mCurrentGridData.substring(i,i+1));
             mCtx.fillStyle = colorPalette[colorIndex];
-            mCtx.fillRect( x*mPixelSize, y*mPixelSize, mPixelSize, mPixelSize);
+            mCtx.fillRect( x*mPixelSize - mSpacing / 2, y*mPixelSize - mSpacing / 2, mPixelSize - mSpacing, mPixelSize - mSpacing);
         }
     }
 	$("#info").text(mCurrentTime);
@@ -48,6 +67,7 @@ function initApp()
 	
 	/* Init time manager */
 	mTime = new Time();
+	mRefreshTimer = 0.0;
 	
 	getLatestData();
 

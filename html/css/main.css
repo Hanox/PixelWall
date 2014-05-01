@@ -99,11 +99,9 @@ textarea {
 body {
    background: #222;
 }
-h1,h2,h3,h4,p {
-	color:#E6E6E6;
-}
-   
+
 #canvas-container {
+   color:#E6E6E6;
    width: 100%;
    text-align:center;
 }
