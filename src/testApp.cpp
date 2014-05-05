@@ -6,8 +6,11 @@ void testApp::setup()
     
     camWidth = 320;
     camHeight = 240;
+    deviation = 25.0f;
     
+    vidGrabber.listDevices();
     vidGrabber.setVerbose(true);
+    vidGrabber.setDesiredFrameRate(30);
     vidGrabber.initGrabber(camWidth,camHeight);
     
     int numPixels = camWidth * camHeight / 100;
@@ -26,9 +29,17 @@ void testApp::setup()
     colorData = vector<ofColor>(gridPixels);
     compareHues = vector<float>(3);
     
+    //comment to manually sample hues
+    compareHues[0] = 0.0f; //R
+    compareHues[1] = 115.0f * 255.0f / 360.0f; //G
+    compareHues[2] = 250.0f * 255.0f / 360.0f; //B
+    
     colorSelectX = 0;
     colorSelectY = 0;
-    selectColorIndex = 0;
+    
+    //set to 0 to manually sample hues
+    selectColorIndex = 3;
+    
     registerColor = false;
 }
 
@@ -97,7 +108,15 @@ void testApp::update()
                 if( sData.compare(lastData) != 0)
                 {
                     lastData = sData;
-                    sData = "curl \"http://hannesdeville.be/dev/pixelwall/webservice.php?id=thesecretid&data=" + sData + "\"";
+                    
+                    //fetch current local time
+                    time_t rawtime;
+                    struct tm * timeinfo;
+                    time (&rawtime);
+                    timeinfo = localtime (&rawtime);
+                    string sTime = url_encode(asctime(timeinfo));
+                    
+                    sData = "curl \"http://hannesdeville.be/dev/pixelwall/webservice.php?id=thesecretid&data=" + sData + "&time=" + sTime + "\"";
                     system( (char*)sData.c_str());
                     cout << "system call: " << sData;
                 }
@@ -234,7 +253,33 @@ ofColor testApp::getColorAtPos(int x, int y, int width, unsigned char * pixels)
 
 bool testApp::isHueSimilar(float source, float target)
 {
-    float deviation = 20.0f;
-    return source > target - deviation && source < target + deviation;
+    //TODO: fix wrap around errors!
+    float low = target - deviation;
+    float high = target + deviation;
+    return  (source >= low && source <= high) ||
+            (source - 255.0f >= low && source - 255.0f <= high) ||
+            (source + 255.0f >= low && source + 255.0f <= high);
+}
+
+string testApp::url_encode(const string &value)
+{
+    ostringstream escaped;
+    escaped.fill('0');
+    escaped << hex;
+    
+    for (string::const_iterator i = value.begin(), n = value.end(); i != n; ++i) {
+        string::value_type c = (*i);
+        if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
+            escaped << c;
+        }
+        else if (c == ' ')  {
+            escaped << '+';
+        }
+        else {
+            escaped << '%' << setw(2) << ((int) c) << setw(0);
+        }
+    }
+    
+    return escaped.str();
 }
 

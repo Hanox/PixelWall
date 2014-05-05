@@ -1,9 +1,12 @@
 #pragma once
 #include "ofMain.h"
-#include "ofxOpenCv.h"
 #include "SkewGrid.h"
 #include "DragPoint.h"
 #include <string>
+#include <time.h>
+#include <iomanip>
+#include <cctype>
+#include <sstream>
 
 class testApp : public ofBaseApp
 {
@@ -27,6 +30,7 @@ public:
     float getHueAtPos(int x, int y, int camWidth, unsigned char * pixels);
     ofColor getColorAtPos(int x, int y, int camWidth, unsigned char * pixels);
     bool isHueSimilar(float source, float target);
+    string url_encode(const string &value);
 
     ofVideoGrabber vidGrabber;
     int camHeight;
@@ -43,4 +47,5 @@ public:
     int selectColorIndex;
     bool registerColor;
     string lastData;
+    float deviation;
 };
