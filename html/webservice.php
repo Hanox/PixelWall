@@ -8,10 +8,6 @@
         $data = rtrim($_GET['data']);
 		$time = rtrim($_GET['time']);
         
-        echo "id: $id<br/>";
-        echo "data: $data<br/>";
-		echo "time: $time<br/>";
-        
         //securely check if the id is valid (using a hidden php script, out of public html or with .htacces restrictions)
         $idValid = true;
         //bool idValid = hiddenPhp.isIdValid($id);
@@ -26,15 +22,24 @@
             $file = 'pixeldata.txt';
             
             $current = file_get_contents($file);
-            //echo "file content before: $current<br/>";
-			
             $current .= "$time|$data\n";
             
             // Write the contents back to the file
             file_put_contents($file, $current);
             
-            //$current = file_get_contents($file);
-            //echo "file content: $current<br/>";
+            echo "updated";
         }
+        else
+        {
+            echo "invalid";
+        }
+    }
+    else
+    {
+        $file = 'pixeldata.txt';
+        $data = file_get_contents($file);
+        $lines = explode("|", $data);
+        $line = $lines[count($lines)-1];
+        echo $line;
     }
 ?>

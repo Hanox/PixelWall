@@ -22,7 +22,7 @@ var mGridHeight = 20;
 var mPixelSize = 20;
 var mSpacing = 2;
 
-var mRefreshInterval = 1.0;
+var mRefreshInterval = 5.0; //refresh every x seconds
 var mRefreshTimer;
 var mIndex;
 var mLines;
@@ -30,6 +30,8 @@ var mLines;
 //data
 var mCurrentGridData;
 var mCurrentTime;
+
+var mFetching;
 
 var colorPalette = ["rgb(255,0,0)","rgb(0,255,0)","rgb(0,0,255)"];
 
@@ -40,7 +42,8 @@ var fnUpdate = function()
 	if( mRefreshTimer > mRefreshInterval)
 	{
 		mRefreshTimer -= mRefreshInterval;
-		if( mLines == null ||  (mLines != null && mIndex == mLines.length - 2) )
+        
+		if( !mFetching && ( mLines == null ||  (mLines != null && mIndex == mLines.length - 2) ) )
 		{
 			getData(-1);
 		}
@@ -65,6 +68,9 @@ function drawGrid()
 
 function initApp()
 {
+    /* disable jQuery ajax caching to keep getting the latest file */
+    $.ajaxSetup({cache: false});
+    
 	/* Size The Canvas */
 	$("#canvas").attr("width", mGridWidth*mPixelSize+"px");
 	$("#canvas").attr("height", mGridHeight*mPixelSize+"px");
@@ -74,7 +80,8 @@ function initApp()
 	/* Init time manager */
 	mTime = new Time();
 	mRefreshTimer = 0.0;
-	
+	mFetching = false;
+    
 	getData(-1);
 	
 	/* keyboard */
@@ -103,10 +110,12 @@ function getData(index)
 	mIndex = index;
 	if(mIndex == -1 )
 	{
+        mFetching = true;
 		$.get('pixeldata.txt', function(data)
 		{
 			mLines = data.split("\n");
 			tryUpdateGrid();
+            mFetching = false;
 		}, 'text');
 	}
 	else
@@ -124,8 +133,8 @@ function tryUpdateGrid()
 	
 	if(mCurrentGridData != lineContents[1])
 	{
-	  mCurrentGridData = lineContents[1];
-	  drawGrid();
+        mCurrentGridData = lineContents[1];
+        drawGrid();
 	}
 }
 
