@@ -20,7 +20,7 @@ public:
     
     void Draw();
     
-    void UpdateGrid(ofVec2f topLeft, ofVec2f bottomRight, int nWidth, int nHeight);
+    void UpdateGrid(ofVec2f topLeft, ofVec2f topRight, ofVec2f bottomLeft, ofVec2f bottomRight, int nWidth, int nHeight);
     vector<ofVec2f> grid;
 };
 

@@ -12,22 +12,24 @@ SkewGrid::SkewGrid()
     grid = vector<ofVec2f>();
 }
 
-void SkewGrid::UpdateGrid(ofVec2f topLeft, ofVec2f bottomRight, int nWidth, int nHeight)
+void SkewGrid::UpdateGrid(ofVec2f topLeft, ofVec2f topRight, ofVec2f bottomLeft, ofVec2f bottomRight, int nWidth, int nHeight)
 {
+    ofVec2f lefttbStep = (bottomLeft - topLeft) / nHeight;
+    ofVec2f righttbStep = (bottomRight - topRight) / nHeight;
+    
     //clear
     grid.clear();
     grid = vector<ofVec2f>(nWidth*nHeight);
-    
-    float stepX = (bottomRight.x - topLeft.x) / (float) (nWidth - 1);
-    float stepY = (topLeft.y - bottomRight.y) / (float) (nHeight - 1);
     
     for (int xval = 0; xval<nWidth; ++xval)
     {
         for (int yval = 0; yval<nHeight; ++yval)
         {
+            ofVec2f leftStart = topLeft + yval * lefttbStep;
+            ofVec2f rightEnd = topRight + yval * righttbStep;
+            ofVec2f vec = leftStart + (rightEnd - leftStart) * ((float)xval/(float)nWidth);
+            
             int index = yval * nWidth + xval;
-            ofVec2f vec;
-            vec.set(topLeft.x + xval * stepX, bottomRight.y + yval * stepY);
             grid[index] = vec;
         }
     }

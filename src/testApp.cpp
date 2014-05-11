@@ -18,16 +18,32 @@ void testApp::setup()
     ofVec2f topLeft;
     topLeft.set(10, 10);
     
+    ofVec2f topRight;
+    topRight.set(camWidth - 10, 10);
+    
+    ofVec2f bottomLeft;
+    bottomLeft.set(10, camHeight-10);
+    
     ofVec2f bottomRight;
-    bottomRight.set(310, 230);
+    bottomRight.set(camWidth-10, camHeight-10);
     
     dragGridTopLeft.Setup(topLeft);
+    dragGridTopRight.Setup(topRight);
+    dragGridBottomLeft.Setup(bottomLeft);
     dragGridBottomRight.Setup(bottomRight);
     
     int gridPixels = 30*20;
     wallData = vector<int>(gridPixels);
     colorData = vector<ofColor>(gridPixels);
     compareHues = vector<float>(3);
+    
+    //fill wall data with "invalid"
+    for (int i = 0; i < wallData.size(); ++i)
+    {
+        wallData[i] = -1;
+    }
+    
+    //TODO: load from webserver, wait for loading to compete before starting
     
     //comment to manually sample hues
     compareHues[0] = 0.0f; //R
@@ -47,7 +63,7 @@ void testApp::update()
 {
 	ofBackground(100,100,100);
     
-    skewGrid.UpdateGrid(dragGridTopLeft.position, dragGridBottomRight.position, 30, 20);
+    skewGrid.UpdateGrid(dragGridTopLeft.position, dragGridTopRight.position, dragGridBottomLeft.position, dragGridBottomRight.position, 30, 20);
     
     bool bNewFrame = false;
     
@@ -86,10 +102,9 @@ void testApp::update()
                     }
                 }
                 
-                //if we encounter an invalid color we invalidate the entire image
-                if (!isColorValid)
+                //invalidate until we have an entire valid image built
+                if (!isColorValid && wallData[gridIndex] == -1)
                 {
-                    wallData[gridIndex] = -1;
                     isImageValid = false;
                     //break;
                 }
@@ -133,6 +148,8 @@ void testApp::draw()
     
     //draw grid
     dragGridTopLeft.Draw();
+    dragGridTopRight.Draw();
+    dragGridBottomLeft.Draw();
     dragGridBottomRight.Draw();
     skewGrid.Draw();
     
@@ -176,18 +193,24 @@ void testApp::mouseMoved(int x, int y ){
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
     dragGridTopLeft.MouseDragged(x, y, button);
+    dragGridTopRight.MouseDragged(x, y, button);
+    dragGridBottomLeft.MouseDragged(x, y, button);
     dragGridBottomRight.MouseDragged(x, y, button);
 }
 
 //--------------------------------------------------------------
 void testApp::mousePressed(int x, int y, int button){
     dragGridTopLeft.MousePressed(x, y, button);
+    dragGridTopRight.MousePressed(x, y, button);
+    dragGridBottomLeft.MousePressed(x, y, button);
     dragGridBottomRight.MousePressed(x, y, button);
 }
 
 //--------------------------------------------------------------
 void testApp::mouseReleased(int x, int y, int button){
     dragGridTopLeft.MouseReleased(x, y, button);
+    dragGridTopRight.MouseReleased(x, y, button);
+    dragGridBottomLeft.MouseReleased(x, y, button);
     dragGridBottomRight.MouseReleased(x, y, button);
     
     colorSelectX = x;

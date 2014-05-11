@@ -37,6 +37,8 @@ public:
     int camWidth;
     SkewGrid skewGrid;
     DragPoint dragGridTopLeft;
+    DragPoint dragGridTopRight;
+    DragPoint dragGridBottomLeft;
     DragPoint dragGridBottomRight;
     vector<int> wallData;
     vector<ofColor> colorData;
