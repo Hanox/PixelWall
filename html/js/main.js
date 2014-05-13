@@ -63,7 +63,15 @@ function drawGrid()
             mCtx.fillRect( x*mPixelSize - mSpacing / 2, y*mPixelSize - mSpacing / 2, mPixelSize - mSpacing, mPixelSize - mSpacing);
         }
     }
-	$("#info").text(mCurrentTime);
+	
+	var timeArr = mCurrentTime.split(" ");
+	$("#date").text(timeArr[1] +" "+timeArr[2]);
+	$("#year").text(timeArr[4]);
+	
+	var timeArrB = timeArr[3].split(":");
+	$("#hours").text(timeArrB[0]);
+	$("#minutes").text(timeArrB[1]);
+	$("#seconds").text(timeArrB[2]);
 }
 
 function initApp()
@@ -92,6 +100,10 @@ function initApp()
 		//RIGHT
 		else if(event.keyCode == 39){ showNext(); }
 	});
+	
+	/* buttons */
+	$('#btn-prev').click(function () { showPrev(); });
+	$('#btn-next').click(function () { showNext(); });
 
 	/* Start the main loop */
 	tick();
@@ -111,11 +123,13 @@ function getData(index)
 	if(mIndex == -1 )
 	{
         mFetching = true;
+		$("#status").css("background-color", "cyan");
 		$.get('pixeldata.txt', function(data)
 		{
 			mLines = data.split("\n");
 			tryUpdateGrid();
             mFetching = false;
+			$("#status").css("background-color", "white");
 		}, 'text');
 	}
 	else

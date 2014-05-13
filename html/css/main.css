@@ -98,21 +98,83 @@ textarea {
    ========================================================================== */
 body {
    background: #222;
+   font-family: 'Lato', sans-serif;
+   color: #FFF;
 }
 
 #canvas-container {
-   color:#E6E6E6;
    width: 100%;
    text-align:center;
 }
 
 canvas {
    display: inline;
-   margin: 32px 0;
+   margin: 8px 0px 8px;
 }
 
+div#outer {
+    width: 600px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0px;
+}
 
+div#header {
+    padding: 0px;
+    margin: 8px 0 0 0;
+    text-align: left;
+	font-weight: 300;
+}
 
+div#header-left {
+	display:block;
+	float: left;
+}
+
+div#header-right {
+	display:block;
+	float: right;
+}
+
+div#main {
+    margin: 0;
+    padding: 0;
+	font-weight: 700;
+}
+
+#date, #hours, #minutes, #seconds {
+	font-weight: 900;
+}
+
+#status {
+	display:block;
+	float: left;
+	background-color:#fff;
+	width:17px;
+	height: 17px;
+	margin: 2px 4px 0 0;
+}
+
+.button {
+	display:block;
+	float: left;
+	color:#222;
+	background-color:#fff;
+	height: 17px;
+	margin: 0 8px 0 0;
+	padding: 0 4px 5px 4px;
+}
+
+.button:hover {
+	background-color:cyan;
+}
+
+a:link {text-decoration:none;}
+a:visited {text-decoration:none;}
+a:hover {text-decoration:none;}
+a:active {text-decoration:none;}
 
 /* ==========================================================================
    Helper classes
